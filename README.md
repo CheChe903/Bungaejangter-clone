@@ -22,40 +22,39 @@
 | 3      | GET    | /products/{productId} | 특정 상품 조회 | O |
 | 4      | GET    | /products/{productId}/images | 특정 상품 이미지 조회 | O |
 | 5      | GET    | /products/{productId}/tags | 특정 상품 태그 조회 | O |
-| 6      | POST   | /products/{productId}/favorites | 찜하기 | O |
+| 6      | POST   | /products/{productId}/favorites | 찜하기 및 찜 해제하기 | O |
 | 7      | POST   | /products/new | 상품 등록 | O |
 | 8      | POST   | /products/images | 상품 이미지 업로드 | O |
-| 9      | PATCH  | /products/{productIdx}/edit | 특정 상품 수정 | O |
-| 10     | PATCH  | /products/{productIdx}/status/ed | 특정 상품 판매상태 변경 | O |
-| 11     | PATCH  | /products/{productIdx}/up | 특정 상품 UP하기 | O |
-| 12     | DELETE | /products/{productIdx}/d | 특정 상품 삭제 | O |
-| 13     | DELETE | /products/{productIdx}/favorites | 찜 해제 | O |
+| 9      | PATCH  | /products/{productId}/edit | 특정 상품 수정 | O |
+| 10     | PATCH  | /products/{productId}/status/ed | 특정 상품 판매상태 변경 | O |
+| 11     | PATCH  | /products/{productId}/up | 특정 상품 UP하기 | O |
+| 12     | DELETE | /products/{productId}/delete | 특정 상품 삭제 | O |
 
 ### 카테고리 관리
 | 인덱스 | 메서드 | URI | 설명 | 명세 여부 |
 |--------|--------|-----|------|-----------|
 | 14     | GET    | /categories | 모든 카테고리 조회 | O |
-| 15     | GET    | /categories/{categoryNum} | 카테고리별 상품 조회 | O |
-| 16     | GET    | /categories/{categoryIdx}?order | 해당 카테고리에서 정렬기준에 따라 상품 조회 | O |
+| 15     | GET    | /categories/{categoryId} | 카테고리별 상품 조회 | O |
+| 16     | GET    | /categories/{categoryId}?order | 해당 카테고리에서 정렬기준에 따라 상품 조회 | O |
 | 17     | POST   | /categories/new | 카테고리 등록 | O |
-| 18     | PATCH  | /categories/{categoryIdx}/edit | 카테고리 수정 | O |
-| 19     | DELETE | /categories/{categoryIdx}/d | 카테고리 삭제 | O |
+| 18     | PATCH  | /categories/{categoryId}/edit | 카테고리 수정 | O |
+| 19     | DELETE | /categories/{categoryId}/delete | 카테고리 삭제 | O |
 
 ### 사용자 관리
 | 인덱스 | 메서드 | URI | 설명 | 명세 여부 |
 |--------|--------|-----|------|-----------|
 | 20     | GET    | /users | 모든 회원 조회 | O |
-| 21     | GET    | /users/{userIdx} | 특정 회원 정보 조회 | O |
-| 22     | GET    | /users/{userIdx}/products | 특정 회원의 판매상품 조회 | O |
-| 23     | GET    | /users/{userIdx}/three-products | 특정 회원의 최신 3개 판매상품 조회 | O |
-| 24     | GET    | /users/{userIdx}/products?status | 특정 회원의 판매상품 거래상태에 따라 조회 | O |
-| 25     | GET    | /users/{userIdx}/products?order | 특정 회원의 판매상품 정렬기준에 따라 조회 | O |
-| 26     | GET    | /users/{userIdx}/reviews | 특정 회원에 대한 추가 조회 | O |
-| 27     | GET    | /users/{userIdx}/favorites | 특정 회원의 찜한 상품 조회 | O |
-| 28     | GET    | /users/{userIdx}/followings | 특정 회원이 팔로우한 목록 조회 | O |
-| 29     | GET    | /users/{userIdx}/followers | 특정 회원을 팔로우한 목록 조회 | O |
-| 30     | POST   | /users/sign-up | 회원가입 | O |
-| 31     | POST   | /users/log-in | 로그인 | O |
+| 21     | GET    | /users/{userId} | 특정 회원 정보 조회 | O |
+| 22     | GET    | /users/{userId}/products | 특정 회원의 판매상품 조회 | O |
+| 23     | GET    | /users/{userId}/three-products | 특정 회원의 최신 3개 판매상품 조회 | O |
+| 24     | GET    | /users/{userId}/products?status | 특정 회원의 판매상품 거래상태에 따라 조회 | O |
+| 25     | GET    | /users/{userId}/products?order | 특정 회원의 판매상품 정렬기준에 따라 조회 | O |
+| 26     | GET    | /users/{userId}/reviews | 특정 회원에 대한 추가 조회 | O |
+| 27     | GET    | /users/{userId}/favorites | 특정 회원의 찜한 상품 조회 | O |
+| 28     | GET    | /users/{userId}/followings | 특정 회원이 팔로우한 목록 조회 | O |
+| 29     | GET    | /users/{userId}/followers | 특정 회원을 팔로우한 목록 조회 | O |
+| 30     | POST   | /users/register | 회원가입 | O |
+| 31     | POST   | /users/login | 로그인 | O |
 
 ---
 
