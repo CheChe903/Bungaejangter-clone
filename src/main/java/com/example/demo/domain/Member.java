@@ -1,5 +1,7 @@
 package com.example.demo.domain;
 
+import com.example.demo.util.PasswordUtil;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -7,8 +9,7 @@ public class Member {
     private Long memberId;
     private String username;
     private String email;
-    private String password;
-
+    private String hashedPassword;
 
     public Long getMemberId() {
         return memberId;
@@ -35,10 +36,10 @@ public class Member {
     }
 
     public String getPassword() {
-        return password;
+        return hashedPassword;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        this.hashedPassword = PasswordUtil.hashPassword(password);
     }
 }
