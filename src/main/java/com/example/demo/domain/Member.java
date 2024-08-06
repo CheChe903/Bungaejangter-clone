@@ -2,9 +2,6 @@ package com.example.demo.domain;
 
 import com.example.demo.util.PasswordUtil;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 public class Member {
     private Long memberId;
     private String username;
