@@ -1,16 +1,12 @@
 package com.example.demo.domain;
 
-import com.example.demo.util.PasswordUtil;
-
-import java.math.BigDecimal;
-import java.util.Date;
-
 public class Member {
     private Long memberId;
     private String username;
     private String email;
     private String hashedPassword;
 
+    // Getters and Setters
     public Long getMemberId() {
         return memberId;
     }
@@ -39,7 +35,7 @@ public class Member {
         return hashedPassword;
     }
 
-    public void setPassword(String password) {
-        this.hashedPassword = PasswordUtil.hashPassword(password);
+    public void setPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
     }
 }
