@@ -1,1 +1,19 @@
-spring.application.name=demo
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+
+
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.orm.jdbc.bind: trace
+logging:
+  level:
+    root: debug
+
+spring:
+  mvc:
+    servlet:
+      load-on-startup: -1
