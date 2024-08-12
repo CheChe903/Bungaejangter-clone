@@ -2,9 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.dto.request.MemberLoginRequest;
 import com.example.demo.domain.dto.request.MemberRegisterRequest;
-import com.example.demo.domain.dto.response.LoginResponse;
-import com.example.demo.domain.dto.response.RegisterResponse;
 import com.example.demo.service.MemberService;
+import com.example.demo.util.ResponseUtil;
+import com.example.demo.repository.MemberRepository;
+import com.example.demo.util.PasswordUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -16,65 +17,55 @@ import java.io.IOException;
 
 @WebServlet(urlPatterns = "/member/*")
 public class MemberController extends HttpServlet {
-    private final MemberService memberService;
-    private final ObjectMapper objectMapper;
+    private MemberService memberService;
+    private ObjectMapper objectMapper;
 
-    // 기본 생성자 추가
     public MemberController() {
-        this.memberService = new MemberService();
-        this.objectMapper = new ObjectMapper();
     }
 
-    public MemberController(MemberService memberService, ObjectMapper objectMapper) {
-        this.memberService = memberService;
-        this.objectMapper = objectMapper;
+    @Override
+    public void init() throws ServletException {
+        super.init();
+        this.memberService = new MemberService(new MemberRepository(), new PasswordUtil());
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getPathInfo();
-
-        if ("/register".equals(path)) {
-            registerMember(req, resp);
-        } else if ("/login".equals(path)) {
-            loginMember(req, resp);
-        } else {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid path");
+        try {
+            switch (path) {
+                case "/register":
+                    registerMember(req, resp);
+                    break;
+                case "/login":
+                    loginMember(req, resp);
+                    break;
+                default:
+                    ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid path");
+            }
+        } catch (Exception e) {
+            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
         }
     }
 
     private void registerMember(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         MemberRegisterRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberRegisterRequest.class);
-
-        if (memberRequest.getUsername() == null || memberRequest.getEmail() == null || memberRequest.getPassword() == null) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(resp.getWriter(), new RegisterResponse("Missing parameters", HttpServletResponse.SC_BAD_REQUEST));
-            return;
+        boolean success = memberService.registerMember(memberRequest);
+        if (success) {
+            ResponseUtil.sendSuccessResponse(resp, "Registration successful!");
+        } else {
+            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Registration failed. Check your input.");
         }
-
-        memberService.registerMember(memberRequest.getUsername(), memberRequest.getEmail(), memberRequest.getPassword());
-
-        resp.setStatus(HttpServletResponse.SC_OK);
-        objectMapper.writeValue(resp.getWriter(), new RegisterResponse("Registration successful!", HttpServletResponse.SC_OK));
     }
 
     private void loginMember(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         MemberLoginRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberLoginRequest.class);
-
-        if (memberRequest.getEmail() == null || memberRequest.getPassword() == null) {
-            resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            objectMapper.writeValue(resp.getWriter(), new LoginResponse("Missing parameters", HttpServletResponse.SC_BAD_REQUEST));
-            return;
-        }
-
-        var member = memberService.login(memberRequest.getEmail(), memberRequest.getPassword());
-        if (member != null) {
-            resp.setStatus(HttpServletResponse.SC_OK);
-            objectMapper.writeValue(resp.getWriter(), new LoginResponse("Login successful! Welcome " + member.getUsername(), HttpServletResponse.SC_OK));
+        boolean success = memberService.login(memberRequest);
+        if (success) {
+            ResponseUtil.sendSuccessResponse(resp, "Login successful!");
         } else {
-            resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            objectMapper.writeValue(resp.getWriter(), new LoginResponse("Invalid email or password", HttpServletResponse.SC_UNAUTHORIZED));
+            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Invalid email or password");
         }
     }
 }
-
