@@ -53,7 +53,7 @@ public class MemberController extends HttpServlet {
         MemberRegisterRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberRegisterRequest.class);
         boolean success = memberService.registerMember(memberRequest);
         if (success) {
-            ResponseUtil.sendSuccessResponse(resp, "Registration successful!");
+            ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_OK,"Registration successful!");
         } else {
             ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Registration failed. Check your input.");
         }
@@ -63,7 +63,7 @@ public class MemberController extends HttpServlet {
         MemberLoginRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberLoginRequest.class);
         boolean success = memberService.login(memberRequest);
         if (success) {
-            ResponseUtil.sendSuccessResponse(resp, "Login successful!");
+            ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_OK, "Login successful!");
         } else {
             ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Invalid email or password");
         }

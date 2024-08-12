@@ -9,12 +9,12 @@ import java.io.IOException;
 public class ResponseUtil {
     private static final ObjectMapper objectMapper = new ObjectMapper();
 
-    public static void sendSuccessResponse(HttpServletResponse resp, String message) throws IOException {
-        sendResponse(resp, HttpServletResponse.SC_OK, message, true);
+    public static void sendSuccessResponse(HttpServletResponse resp,int statusCode, String message) throws IOException {
+        sendResponse(resp, statusCode, message, true);
     }
 
     public static void sendErrorResponse(HttpServletResponse resp, int statusCode, String message) throws IOException {
-        sendResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, message, false);
+        sendResponse(resp, statusCode, message, false);
     }
 
     private static void sendResponse(HttpServletResponse resp, int statusCode, String message, boolean success) throws IOException {
