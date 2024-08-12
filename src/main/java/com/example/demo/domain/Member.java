@@ -6,7 +6,14 @@ public class Member {
     private String email;
     private String hashedPassword;
 
-    // Getters and Setters
+    public Member() {}
+
+    public Member(String username, String email, String hashedPassword) {
+        this.username = username;
+        this.email = email;
+        this.hashedPassword = hashedPassword;
+    }
+
     public Long getMemberId() {
         return memberId;
     }

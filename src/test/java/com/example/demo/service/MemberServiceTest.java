@@ -1,18 +1,34 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Member;
+import com.example.demo.domain.dto.request.MemberLoginRequest;
+import com.example.demo.domain.dto.request.MemberRegisterRequest;
+import com.example.demo.repository.MemberRepository;
+import com.example.demo.util.PasswordUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class MemberServiceTest {
+
+    @Mock
+    private MemberRepository memberRepository;
+
+    @Mock
+    private PasswordUtil passwordUtil;
+
+    @InjectMocks
     private MemberService memberService;
 
     @BeforeEach
     void setUp() {
-        memberService = new MemberService();
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -22,15 +38,25 @@ class MemberServiceTest {
         String username = "KIMJINYEONG";
         String email = "cheche903@naver.com";
         String password = "password";
+        String hashedPassword = "hashedPassword";
+
+        when(passwordUtil.hashPassword(password)).thenReturn(hashedPassword);
+
+        MemberRegisterRequest registerRequest = new MemberRegisterRequest(username, email, password);
+        when(memberRepository.getMemberByEmail(email)).thenReturn(null);
+        doNothing().when(memberRepository).addMember(any(Member.class));
 
         // When
-        memberService.registerMember(username, email, password);
-        Member member = memberService.login(email, password);
+        boolean registerSuccess = memberService.registerMember(registerRequest);
+
+        MemberLoginRequest loginRequest = new MemberLoginRequest(email, password);
+        when(memberRepository.getMemberByEmail(email)).thenReturn(new Member(username, email, hashedPassword));
+
+        boolean loginSuccess = memberService.login(loginRequest);
 
         // Then
-        assertNotNull(member);
-        assertEquals(username, member.getUsername());
-        assertEquals(email, member.getEmail());
+        assertTrue(registerSuccess);
+        assertTrue(loginSuccess);
     }
 
     @Test
@@ -41,49 +67,34 @@ class MemberServiceTest {
         String email = "cheche903@naver.com";
         String password = "password";
         String wrongPassword = "wrongPassword";
+        String hashedPassword = "hashedPassword";
+
+        when(passwordUtil.hashPassword(password)).thenReturn(hashedPassword);
+        when(passwordUtil.hashPassword(wrongPassword)).thenReturn("wrongHashedPassword");
+
+        MemberRegisterRequest registerRequest = new MemberRegisterRequest(username, email, password);
+        when(memberRepository.getMemberByEmail(email)).thenReturn(new Member(username, email, hashedPassword));
 
         // When
-        memberService.registerMember(username, email, password);
-        Member member = memberService.login(email, wrongPassword);
+        memberService.registerMember(registerRequest);
+        boolean loginSuccess = memberService.login(new MemberLoginRequest(email, wrongPassword));
 
         // Then
-        assertNull(member);
+        assertFalse(loginSuccess);
     }
 
     @Test
-    @DisplayName("로그인 실패 (존재하는 회원) 오류")
+    @DisplayName("로그인 실패 (존재하지 않는 회원) 오류")
     void testLoginFailNonexistentEmail() {
         // Given
         String email = "cheche903@naver.com";
         String password = "password";
 
         // When
-        Member member = memberService.login(email, password);
+        boolean loginSuccess = memberService.login(new MemberLoginRequest(email, password));
 
         // Then
-        assertNull(member);
+        assertFalse(loginSuccess);
     }
 
-    @Test
-    @DisplayName("memberId 자동증가 테스트")
-    void testIncreaseMeberId() {
-        // Given
-        String username1 = "KIMJINYEONG";
-        String email1 = "cheche903@naver.com";
-        String password1 = "password";
-
-        String username2 = "KIMJINYEONG2";
-        String email2 = "cheche904@naver.com";
-        String password2 = "password";
-
-        // When
-        memberService.registerMember(username1, email1, password1);
-        memberService.registerMember(username2, email2, password2);
-
-        Member member1 = memberService.login(email1, password1);
-        Member member2 = memberService.login(email2, password2);
-        // Then
-        assertEquals(member1.getMemberId(),1);
-        assertEquals(member2.getMemberId(),2);
-    }
 }
