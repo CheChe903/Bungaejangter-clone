@@ -14,7 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet(urlPatterns = {"/register", "/login"})
+@WebServlet(urlPatterns = "/member/*")
 public class MemberController extends HttpServlet {
     private final MemberService memberService;
     private final ObjectMapper objectMapper;
@@ -32,7 +32,7 @@ public class MemberController extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getServletPath();
+        String path = req.getPathInfo();
 
         if ("/register".equals(path)) {
             registerMember(req, resp);
@@ -77,3 +77,4 @@ public class MemberController extends HttpServlet {
         }
     }
 }
+
