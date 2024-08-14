@@ -3,46 +3,48 @@ package com.example.demo.service;
 import com.example.demo.domain.Member;
 import com.example.demo.domain.dto.request.MemberLoginRequest;
 import com.example.demo.domain.dto.request.MemberRegisterRequest;
+import com.example.demo.domain.dto.response.LoginResponse;
+import com.example.demo.domain.dto.response.RegisterResponse;
 import com.example.demo.repository.MemberRepository;
+import com.example.demo.util.JwtUtil;
 import com.example.demo.util.PasswordUtil;
+import jakarta.servlet.http.HttpServletResponse;
+
 
 public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordUtil passwordUtil;
 
-    public MemberService(MemberRepository memberRepository, PasswordUtil passwordUtil) {
+    private final JwtUtil jwtUtil;
+
+    public MemberService(MemberRepository memberRepository, PasswordUtil passwordUtil, JwtUtil jwtUtil) {
         this.memberRepository = memberRepository;
         this.passwordUtil = passwordUtil;
+        this.jwtUtil =jwtUtil;
     }
 
-    public boolean registerMember(MemberRegisterRequest request) {
-        if (isInvalidRegisterRequest(request)) {
-            return false;
+    public RegisterResponse registerMember(MemberRegisterRequest registerRequest) {
+        if (memberRepository.getMemberByEmail(registerRequest.getEmail()) != null) {
+            return new RegisterResponse("Email already registered", HttpServletResponse.SC_BAD_REQUEST, false);
         }
 
-        Member member = new Member();
-        member.setUsername(request.getUsername());
-        member.setEmail(request.getEmail());
-        String hashedPassword = passwordUtil.hashPassword(request.getPassword());
-        member.setPassword(hashedPassword);
+        String hashedPassword = passwordUtil.hashPassword(registerRequest.getPassword());
+        Member newMember = new Member(registerRequest.getUsername(), registerRequest.getEmail(), hashedPassword);
+        memberRepository.addMember(newMember);
 
-        memberRepository.addMember(member);
-        return true;
+        return new RegisterResponse("Registration successful", HttpServletResponse.SC_OK, true);
     }
 
-    public boolean login(MemberLoginRequest request) {
-        if (isInvalidLoginRequest(request)) {
-            return false;
-        }
-
-        Member member = memberRepository.getMemberByEmail(request.getEmail());
+    public LoginResponse login(MemberLoginRequest loginRequest) {
+        Member member = memberRepository.getMemberByEmail(loginRequest.getEmail());
+        System.out.println(member.getUsername());
         if (member != null) {
-            String hashedPassword = passwordUtil.hashPassword(request.getPassword());
-            if (member.getPassword().equals(hashedPassword)) {
-                return true;
-            }
+            String token = jwtUtil.generateToken(member.getMemberId());
+            System.out.println(member.getUsername());
+            return new LoginResponse("Login successful", HttpServletResponse.SC_OK, true, token);
+        } else {
+            return new LoginResponse("Invalid email or password", HttpServletResponse.SC_UNAUTHORIZED, false, null);
         }
-        return false;
     }
 
     private boolean isInvalidRegisterRequest(MemberRegisterRequest request) {
