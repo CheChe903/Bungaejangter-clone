@@ -32,7 +32,7 @@ public class MemberController extends HttpServlet {
         try {
             this.memberService = new MemberService(new MemberRepository(), new PasswordUtil(), new JwtUtil());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new ServletException("JwtUtil 생성 실패", e);
         }
         this.objectMapper = new ObjectMapper();
     }
