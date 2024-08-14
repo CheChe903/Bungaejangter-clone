@@ -10,6 +10,8 @@ import com.example.demo.util.JwtUtil;
 import com.example.demo.util.PasswordUtil;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.Objects;
+
 
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -37,10 +39,15 @@ public class MemberService {
 
     public LoginResponse login(MemberLoginRequest loginRequest) {
         Member member = memberRepository.getMemberByEmail(loginRequest.getEmail());
-        System.out.println(member.getUsername());
-        if (member != null) {
+
+        if (member == null) {
+            return new LoginResponse("Invalid email or password", HttpServletResponse.SC_UNAUTHORIZED, false, null);
+        }
+
+        String inputPassword = passwordUtil.hashPassword(loginRequest.getPassword());
+
+        if (Objects.equals(inputPassword, member.getPassword())) {
             String token = jwtUtil.generateToken(member.getMemberId());
-            System.out.println(member.getUsername());
             return new LoginResponse("Login successful", HttpServletResponse.SC_OK, true, token);
         } else {
             return new LoginResponse("Invalid email or password", HttpServletResponse.SC_UNAUTHORIZED, false, null);
