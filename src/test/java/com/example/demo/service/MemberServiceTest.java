@@ -3,7 +3,10 @@ package com.example.demo.service;
 import com.example.demo.domain.Member;
 import com.example.demo.domain.dto.request.MemberLoginRequest;
 import com.example.demo.domain.dto.request.MemberRegisterRequest;
+import com.example.demo.domain.dto.response.LoginResponse;
+import com.example.demo.domain.dto.response.RegisterResponse;
 import com.example.demo.repository.MemberRepository;
+import com.example.demo.util.JwtUtil;
 import com.example.demo.util.PasswordUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,6 +26,9 @@ class MemberServiceTest {
     @Mock
     private PasswordUtil passwordUtil;
 
+    @Mock
+    private JwtUtil jwtUtil;
+
     @InjectMocks
     private MemberService memberService;
 
@@ -39,24 +45,31 @@ class MemberServiceTest {
         String email = "cheche903@naver.com";
         String password = "password";
         String hashedPassword = "hashedPassword";
+        String token = jwtUtil.generateToken(1L);
 
+        // Mocking
         when(passwordUtil.hashPassword(password)).thenReturn(hashedPassword);
-
-        MemberRegisterRequest registerRequest = new MemberRegisterRequest(username, email, password);
         when(memberRepository.getMemberByEmail(email)).thenReturn(null);
         doNothing().when(memberRepository).addMember(any(Member.class));
+        when(jwtUtil.generateToken(1L)).thenReturn(token);
+
+        MemberRegisterRequest registerRequest = new MemberRegisterRequest(username, email, password);
 
         // When
-        boolean registerSuccess = memberService.registerMember(registerRequest);
+        RegisterResponse registerResponse = memberService.registerMember(registerRequest);
 
-        MemberLoginRequest loginRequest = new MemberLoginRequest(email, password);
         when(memberRepository.getMemberByEmail(email)).thenReturn(new Member(username, email, hashedPassword));
 
-        boolean loginSuccess = memberService.login(loginRequest);
+        MemberLoginRequest loginRequest = new MemberLoginRequest(email, password);
+        LoginResponse loginResponse = memberService.login(loginRequest);
 
         // Then
-        assertTrue(registerSuccess);
-        assertTrue(loginSuccess);
+        assertTrue(registerResponse.isSuccess());
+        assertEquals("Registration successful", registerResponse.getMessage());
+
+        assertTrue(loginResponse.isSuccess());
+        assertEquals("Login successful", loginResponse.getMessage());
+        assertEquals(token, loginResponse.getToken());
     }
 
     @Test
@@ -69,18 +82,23 @@ class MemberServiceTest {
         String wrongPassword = "wrongPassword";
         String hashedPassword = "hashedPassword";
 
+        // Mocking
         when(passwordUtil.hashPassword(password)).thenReturn(hashedPassword);
         when(passwordUtil.hashPassword(wrongPassword)).thenReturn("wrongHashedPassword");
+        when(memberRepository.getMemberByEmail(email)).thenReturn(new Member(username, email, hashedPassword));
 
         MemberRegisterRequest registerRequest = new MemberRegisterRequest(username, email, password);
-        when(memberRepository.getMemberByEmail(email)).thenReturn(new Member(username, email, hashedPassword));
 
         // When
         memberService.registerMember(registerRequest);
-        boolean loginSuccess = memberService.login(new MemberLoginRequest(email, wrongPassword));
+
+        MemberLoginRequest loginRequest = new MemberLoginRequest(email, wrongPassword);
+        LoginResponse loginResponse = memberService.login(loginRequest);
 
         // Then
-        assertFalse(loginSuccess);
+        assertFalse(loginResponse.isSuccess());
+        assertEquals("Invalid email or password", loginResponse.getMessage());
+        assertNull(loginResponse.getToken());
     }
 
     @Test
@@ -90,11 +108,17 @@ class MemberServiceTest {
         String email = "cheche903@naver.com";
         String password = "password";
 
+        // Mocking
+        when(memberRepository.getMemberByEmail(email)).thenReturn(null);
+
+        MemberLoginRequest loginRequest = new MemberLoginRequest(email, password);
+
         // When
-        boolean loginSuccess = memberService.login(new MemberLoginRequest(email, password));
+        LoginResponse loginResponse = memberService.login(loginRequest);
 
         // Then
-        assertFalse(loginSuccess);
+        assertFalse(loginResponse.isSuccess());
+        assertEquals("Invalid email or password", loginResponse.getMessage());
+        assertNull(loginResponse.getToken());
     }
-
 }

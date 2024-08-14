@@ -2,7 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.dto.request.MemberLoginRequest;
 import com.example.demo.domain.dto.request.MemberRegisterRequest;
+import com.example.demo.domain.dto.response.LoginResponse;
+import com.example.demo.domain.dto.response.RegisterResponse;
 import com.example.demo.service.MemberService;
+import com.example.demo.util.JwtUtil;
 import com.example.demo.util.ResponseUtil;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.util.PasswordUtil;
@@ -26,7 +29,11 @@ public class MemberController extends HttpServlet {
     @Override
     public void init() throws ServletException {
         super.init();
-        this.memberService = new MemberService(new MemberRepository(), new PasswordUtil());
+        try {
+            this.memberService = new MemberService(new MemberRepository(), new PasswordUtil(), new JwtUtil());
+        } catch (IOException e) {
+            throw new ServletException("JwtUtil 생성 실패", e);
+        }
         this.objectMapper = new ObjectMapper();
     }
 
@@ -51,21 +58,14 @@ public class MemberController extends HttpServlet {
 
     private void registerMember(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         MemberRegisterRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberRegisterRequest.class);
-        boolean success = memberService.registerMember(memberRequest);
-        if (success) {
-            ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_OK,"Registration successful!");
-        } else {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Registration failed. Check your input.");
-        }
+        RegisterResponse registerResponse = memberService.registerMember(memberRequest);
+        ResponseUtil.sendResponse(resp, registerResponse.getStatus(), registerResponse);
     }
+
 
     private void loginMember(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         MemberLoginRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberLoginRequest.class);
-        boolean success = memberService.login(memberRequest);
-        if (success) {
-            ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_OK, "Login successful!");
-        } else {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Invalid email or password");
-        }
+        LoginResponse loginResponse = memberService.login(memberRequest);
+        ResponseUtil.sendResponse(resp, loginResponse.getStatus(), loginResponse);
     }
 }
