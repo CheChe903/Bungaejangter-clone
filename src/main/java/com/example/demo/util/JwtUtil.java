@@ -29,8 +29,12 @@ public class JwtUtil {
             this.SECRET_KEY = (String) jwtConfig.get("secret");
             Map<String, Object> accessConfig = (Map<String, Object>) jwtConfig.get("access");
             this.ACCESS_TOKEN_EXPIRATION = Long.parseLong(accessConfig.get("expiredMs").toString());
+        } catch (IOException e) {
+            throw new RuntimeException("I/O error while loading config", e);
+        } catch (ClassCastException e) {
+            throw new RuntimeException("Invalid config format", e);
         } catch (Exception e) {
-            throw new RuntimeException("Failed to load config", e);
+            throw new RuntimeException("Unexpected error while loading config", e);
         }
     }
 
