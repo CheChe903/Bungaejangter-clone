@@ -11,6 +11,16 @@ public class Product {
     private String status;
     private String imageUrl;
 
+    private Member member;
+
+    public Product(String productName, String description, BigDecimal price, String status, String imageUrl) {
+        this.productName = productName;
+        this.description = description;
+        this.price = price;
+        this.status = status;
+        this.imageUrl = imageUrl;
+    }
+
     public Product() {
     }
 
@@ -60,5 +70,13 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public Member getMember() {
+        return member;
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
     }
 }
