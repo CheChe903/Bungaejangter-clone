@@ -1,10 +1,14 @@
 package com.example.demo.domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Member {
     private Long memberId;
     private String username;
     private String email;
     private String hashedPassword;
+    private List<Product> products;
 
     public Member() {}
 
@@ -12,6 +16,16 @@ public class Member {
         this.username = username;
         this.email = email;
         this.hashedPassword = hashedPassword;
+        this.products = new ArrayList<>();
+    }
+
+
+    public List<Product> getProducts() {
+        return products;
+    }
+
+    public void setProducts(List<Product> products) {
+        this.products = products;
     }
 
     public Long getMemberId() {

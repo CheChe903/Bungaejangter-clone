@@ -1,4 +1,6 @@
-package com.example.demo.domain.dto.response;
+package com.example.demo.domain.dto.response.Member;
+
+import com.example.demo.domain.dto.response.ApiResponse;
 
 public class LoginResponse extends ApiResponse {
 

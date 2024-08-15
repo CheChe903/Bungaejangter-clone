@@ -1,35 +1,22 @@
-package com.example.demo.domain;
+package com.example.demo.domain.dto.request.Product;
 
 import java.math.BigDecimal;
 
-public class Product {
-
-    private Long productId;
+public class AddProductRequest {
     private String productName;
     private String description;
     private BigDecimal price;
     private String status;
     private String imageUrl;
 
-    private Member member;
-
-    public Product(String productName, String description, BigDecimal price, String status, String imageUrl) {
+    public AddProductRequest() {
+    }
+    public AddProductRequest(String productName, String description, BigDecimal price, String status, String imageUrl) {
         this.productName = productName;
         this.description = description;
         this.price = price;
         this.status = status;
         this.imageUrl = imageUrl;
-    }
-
-    public Product() {
-    }
-
-    public Long getProductId() {
-        return productId;
-    }
-
-    public void setProductId(Long productId) {
-        this.productId = productId;
     }
 
     public String getProductName() {
@@ -70,13 +57,5 @@ public class Product {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
-    }
-
-    public Member getMember() {
-        return member;
-    }
-
-    public void setMember(Member member) {
-        this.member = member;
     }
 }
