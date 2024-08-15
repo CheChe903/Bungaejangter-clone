@@ -2,8 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.dto.request.Member.MemberLoginRequest;
 import com.example.demo.domain.dto.request.Member.MemberRegisterRequest;
-import com.example.demo.domain.dto.response.LoginResponse;
-import com.example.demo.domain.dto.response.RegisterResponse;
+import com.example.demo.domain.dto.response.Member.LoginResponse;
+import com.example.demo.domain.dto.response.Member.RegisterResponse;
 import com.example.demo.service.MemberService;
 import com.example.demo.util.JwtUtil;
 import com.example.demo.util.ResponseUtil;
