@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.domain.dto.request.MemberLoginRequest;
-import com.example.demo.domain.dto.request.MemberRegisterRequest;
+import com.example.demo.domain.dto.request.Member.MemberLoginRequest;
+import com.example.demo.domain.dto.request.Member.MemberRegisterRequest;
 import com.example.demo.domain.dto.response.LoginResponse;
 import com.example.demo.domain.dto.response.RegisterResponse;
 import com.example.demo.service.MemberService;

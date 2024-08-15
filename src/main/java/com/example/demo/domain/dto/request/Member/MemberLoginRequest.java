@@ -1,4 +1,4 @@
-package com.example.demo.domain.dto.request;
+package com.example.demo.domain.dto.request.Member;
 
 public class MemberLoginRequest {
     private String email;
