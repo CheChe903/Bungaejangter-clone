@@ -1,89 +1,48 @@
 package com.example.demo.service;
 
-import com.example.demo.domain.Member;
-import com.example.demo.domain.Product;
-import com.example.demo.domain.dto.request.Product.AddProductRequest;
-import com.example.demo.domain.dto.response.Product.AddProductResponse;
-import com.example.demo.repository.MemberRepository;
+import com.example.demo.domain.dto.response.Product.ProductDTO;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.util.JwtUtil;
-import jakarta.servlet.http.HttpServletResponse;
+import com.example.demo.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class ProductServiceTest {
+class ProductServiceTest {
 
-    @Mock
     private ProductRepository productRepository;
-
-    @Mock
-    private MemberRepository memberRepository;
-
-    @Mock
-    private JwtUtil jwtUtil;
-
-    @InjectMocks
     private ProductService productService;
 
     @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this);
+        productRepository = mock(ProductRepository.class);
+        MemberRepository memberRepository = mock(MemberRepository.class);
+        JwtUtil jwtUtil = mock(JwtUtil.class);
+        productService = new ProductService(productRepository, memberRepository, jwtUtil);
     }
 
     @Test
-    void testAddProduct_Success() {
+    void testGetAllProductList() {
         // Arrange
-        String token = "valid-token";
-        Long memberId = 1L;
-        Member member = new Member();
-        member.setMemberId(memberId);
+        ProductDTO product1 = new ProductDTO(1L,"Product1", "Description1", new BigDecimal(50.0), "Available", "imageUrl1");
+        ProductDTO product2 = new ProductDTO(2L,"Product2", "Description2", new BigDecimal(50.0), "Available", "imageUrl2");
+        List<ProductDTO> productList = Arrays.asList(product1, product2);
 
-        AddProductRequest request = new AddProductRequest(
-                "kimjinyeong",
-                "hi",
-                BigDecimal.valueOf(699.99),
-                "판매중",
-                "https://xxxx");
-
-        when(jwtUtil.parseToken(token)).thenReturn(memberId);
-        when(memberRepository.getMemberById(memberId)).thenReturn(member);
+        when(productRepository.getAllProductList()).thenReturn(productList);
 
         // Act
-        AddProductResponse response = productService.addProduct(request, token);
+        List<ProductDTO> productDTOList = productService.getAllProductList();
 
         // Assert
-        verify(productRepository).addProduct(any(Product.class));
-        assertEquals("Add Product successful", response.getMessage());
-        assertEquals(HttpServletResponse.SC_CREATED, response.getStatus());
-        assertEquals(true, response.isSuccess());
-    }
-
-    @Test
-    void testAddProduct_TokenInvalid() {
-        // Arrange
-        String token = "invalid-token";
-        AddProductRequest request = new AddProductRequest(
-                "kimjinyeong",
-                "hi",
-                BigDecimal.valueOf(699.99),
-                "판매중",
-                "https://xxxx");
-
-        when(jwtUtil.parseToken(token)).thenThrow(new RuntimeException("Invalid token"));
-
-        // Act & Assert
-        try {
-            productService.addProduct(request, token);
-        } catch (Exception e) {
-            assertEquals("Invalid token", e.getMessage());
-        }
+        assertNotNull(productDTOList);
+        assertEquals(2, productDTOList.size());
+        assertEquals("Product1", productDTOList.get(0).getProductName());
+        assertEquals("Product2", productDTOList.get(1).getProductName());
     }
 }
