@@ -2,13 +2,12 @@ package com.example.demo.controller;
 
 
 import com.example.demo.domain.dto.request.Product.AddProductRequest;
-import com.example.demo.domain.dto.response.Member.RegisterResponse;
 import com.example.demo.domain.dto.response.Product.AddProductResponse;
+import com.example.demo.domain.dto.response.Product.GetAllProductResponse;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 import com.example.demo.util.JwtUtil;
-
 import com.example.demo.util.ResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -46,15 +45,24 @@ public class ProductController extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getPathInfo();
         try {
-            switch (path) {
-                case "/new":
-                    addProduct(req, resp);
-                    break;
-                default:
-                    ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid path");
+            if (path.equals("/new")) {
+                addProduct(req, resp);
+            }
+            else {
+                ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid path");
             }
         } catch (Exception e) {
             ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
+        }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getPathInfo();
+        if (path.equals("/")) {
+            getAllProduct(resp);
+        } else {
+            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid path");
         }
     }
 
@@ -72,4 +80,9 @@ public class ProductController extends HttpServlet {
         }
     }
 
+    private void getAllProduct(HttpServletResponse resp) throws IOException {
+
+        GetAllProductResponse getAllProductResponse = productService.getAllProductList();
+        ResponseUtil.sendResponse(resp, getAllProductResponse.getStatus(), getAllProductResponse);
+    }
 }
