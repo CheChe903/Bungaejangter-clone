@@ -2,8 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.dto.request.Member.MemberLoginRequest;
 import com.example.demo.domain.dto.request.Member.MemberRegisterRequest;
-import com.example.demo.domain.dto.response.Member.LoginResponse;
-import com.example.demo.domain.dto.response.Member.RegisterResponse;
 import com.example.demo.service.MemberService;
 import com.example.demo.util.JwtUtil;
 import com.example.demo.util.ResponseUtil;
@@ -58,14 +56,21 @@ public class MemberController extends HttpServlet {
 
     private void registerMember(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         MemberRegisterRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberRegisterRequest.class);
-        RegisterResponse registerResponse = memberService.registerMember(memberRequest);
-        ResponseUtil.sendResponse(resp, registerResponse.getStatus(), registerResponse);
+        boolean success = memberService.registerMember(memberRequest);
+        if (success) {
+            ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_OK, "Registration successful");
+        } else {
+            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Email already registered");
+        }
     }
-
 
     private void loginMember(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         MemberLoginRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberLoginRequest.class);
-        LoginResponse loginResponse = memberService.login(memberRequest);
-        ResponseUtil.sendResponse(resp, loginResponse.getStatus(), loginResponse);
+        String token = memberService.login(memberRequest);
+        if (token != null) {
+            ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_OK, token);
+        } else {
+            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Invalid email or password");
+        }
     }
 }

@@ -2,7 +2,7 @@ package com.example.demo.repository;
 
 
 import com.example.demo.domain.Product;
-import com.example.demo.domain.dto.ProductDTO;
+import com.example.demo.domain.dto.response.Product.ProductDTO;
 
 import java.util.ArrayList;
 import java.util.HashMap;
