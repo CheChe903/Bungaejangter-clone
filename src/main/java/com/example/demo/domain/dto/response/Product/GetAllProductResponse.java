@@ -1,9 +1,7 @@
 package com.example.demo.domain.dto.response.Product;
 
-import com.example.demo.domain.dto.ProductDTO;
 import com.example.demo.domain.dto.response.ApiResponse;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public class GetAllProductResponse extends ApiResponse {
