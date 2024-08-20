@@ -33,4 +33,9 @@ public class ProductService {
     public List<ProductDTO> getAllProductList() {
         return productRepository.getAllProductList();
     }
+
+    public ProductDTO getProductById(Long productId) {
+        Product product = productRepository.getProductById(productId);
+        return new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl());
+    }
 }
