@@ -1,10 +1,9 @@
 package com.example.demo.domain.dto.response.Product;
 
-import com.example.demo.domain.dto.response.ApiResponse;
+import com.example.demo.support.ApiResponse;
 
-public class AddProductResponse extends ApiResponse {
+public class AddProductResponse {
 
-    public AddProductResponse(String message, int status, boolean success) {
-        super(message, status, success);
+    public AddProductResponse() {
     }
 }

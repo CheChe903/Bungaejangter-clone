@@ -1,15 +1,14 @@
 package com.example.demo.domain.dto.response.Product;
 
-import com.example.demo.domain.dto.response.ApiResponse;
+import com.example.demo.support.ApiResponse;
 
 import java.util.List;
 
-public class GetAllProductResponse extends ApiResponse {
+public class GetAllProductResponse {
 
     private List<ProductDTO> products;
 
-    public GetAllProductResponse(String message, int status, boolean success, List<ProductDTO> products) {
-        super(message, status, success);
+    public GetAllProductResponse(List<ProductDTO> products) {
         this.products=products;
     }
 

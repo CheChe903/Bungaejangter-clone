@@ -1,13 +1,9 @@
 package com.example.demo.domain.dto.response.Member;
 
-import com.example.demo.domain.dto.response.ApiResponse;
-
-public class LoginResponse extends ApiResponse {
-
+public class LoginResponse {
     private String token;
 
-    public LoginResponse(String message, int status, boolean success, String token) {
-        super(message, status, success);
+    public LoginResponse(String token) {
         this.token = token;
     }
 
