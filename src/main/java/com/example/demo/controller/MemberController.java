@@ -2,11 +2,14 @@ package com.example.demo.controller;
 
 import com.example.demo.domain.dto.request.Member.MemberLoginRequest;
 import com.example.demo.domain.dto.request.Member.MemberRegisterRequest;
+import com.example.demo.support.ApiResponse;
+import com.example.demo.support.ApiResponseGenerator;
+import com.example.demo.domain.dto.response.Member.LoginResponse;
 import com.example.demo.service.MemberService;
 import com.example.demo.util.JwtUtil;
-import com.example.demo.util.ResponseUtil;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.util.PasswordUtil;
+import com.example.demo.util.ResponseUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -38,39 +41,44 @@ public class MemberController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getPathInfo();
+        ApiResponse<?> apiResponse;
+
         try {
             switch (path) {
                 case "/register":
-                    registerMember(req, resp);
+                    apiResponse = registerMember(req);
                     break;
                 case "/login":
-                    loginMember(req, resp);
+                    apiResponse = loginMember(req);
                     break;
                 default:
-                    ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid path");
+                    apiResponse = ApiResponseGenerator.fail("Invalid path", HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (Exception e) {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
+            apiResponse = ApiResponseGenerator.fail("Internal server error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
+
+        ResponseUtil.sendResponse(resp, apiResponse);
     }
 
-    private void registerMember(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private ApiResponse<?> registerMember(HttpServletRequest req) throws IOException {
         MemberRegisterRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberRegisterRequest.class);
         boolean success = memberService.registerMember(memberRequest);
         if (success) {
-            ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_OK, "Registration successful");
+            return ApiResponseGenerator.success(HttpServletResponse.SC_OK, "Registration successful", "REG_SUCCESS");
         } else {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Email already registered");
+            return ApiResponseGenerator.fail("Email already registered", HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
-    private void loginMember(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private ApiResponse<?> loginMember(HttpServletRequest req) throws IOException {
         MemberLoginRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberLoginRequest.class);
         String token = memberService.login(memberRequest);
         if (token != null) {
-            ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_OK, token);
+            LoginResponse loginResponse = new LoginResponse(token);
+            return ApiResponseGenerator.success(loginResponse, HttpServletResponse.SC_OK, "Login successful", "LOGIN_SUCCESS");
         } else {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Invalid email or password");
+            return ApiResponseGenerator.fail("AUTH001", "Invalid email or password", HttpServletResponse.SC_UNAUTHORIZED);
         }
     }
 }

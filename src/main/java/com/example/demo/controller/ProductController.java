@@ -1,14 +1,14 @@
 package com.example.demo.controller;
 
-
 import com.example.demo.domain.dto.response.Product.ProductDTO;
 import com.example.demo.domain.dto.request.Product.AddProductRequest;
-import com.example.demo.domain.dto.response.Product.GetAllProductResponse;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.service.ProductService;
 import com.example.demo.util.JwtUtil;
 import com.example.demo.util.ResponseUtil;
+import com.example.demo.support.ApiResponse;
+import com.example.demo.support.ApiResponseGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -39,46 +39,53 @@ public class ProductController extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getPathInfo();
+        ApiResponse<?> apiResponse;
+
         if ("/new".equals(path)) {
-            addProduct(req, resp);
+            apiResponse = addProduct(req);
         } else {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid path");
+            apiResponse = ApiResponseGenerator.fail("Invalid path", HttpServletResponse.SC_BAD_REQUEST);
         }
+
+        ResponseUtil.sendResponse(resp, apiResponse);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getPathInfo();
+        ApiResponse<?> apiResponse;
+
         if ("/".equals(path)) {
-            getAllProducts(resp);
+            apiResponse = getAllProducts();
         } else {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_BAD_REQUEST, "Invalid path");
+            apiResponse = ApiResponseGenerator.fail("Invalid path", HttpServletResponse.SC_BAD_REQUEST);
         }
+
+        ResponseUtil.sendResponse(resp, apiResponse);
     }
 
-    private void addProduct(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+    private ApiResponse<?> addProduct(HttpServletRequest req) throws IOException {
+        String authHeader = req.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            return ApiResponseGenerator.fail("Authorization header is missing or invalid", HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
         try {
-            String authHeader = req.getHeader("Authorization");
-            if (authHeader != null && authHeader.startsWith("Bearer ")) {
-                String token = authHeader.substring(7);
-                AddProductRequest addProductRequest = objectMapper.readValue(req.getInputStream(), AddProductRequest.class);
-                ProductDTO productDTO = productService.addProduct(addProductRequest, token);
-                ResponseUtil.sendSuccessResponse(resp, HttpServletResponse.SC_CREATED, "Add Product successful");
-            } else {
-                ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_UNAUTHORIZED, "Authorization header is missing or invalid");
-            }
+            String token = authHeader.substring(7);
+            AddProductRequest addProductRequest = objectMapper.readValue(req.getInputStream(), AddProductRequest.class);
+            ProductDTO productDTO = productService.addProduct(addProductRequest, token);
+            return ApiResponseGenerator.success(productDTO, HttpServletResponse.SC_CREATED, "Add Product successful", "PRODUCT_ADDED");
         } catch (Exception e) {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Internal server error");
+            return ApiResponseGenerator.fail("Internal server error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 
-    private void getAllProducts(HttpServletResponse resp) throws IOException {
+    private ApiResponse<?> getAllProducts() {
         try {
             List<ProductDTO> products = productService.getAllProductList();
-            GetAllProductResponse response = new GetAllProductResponse("Get All ProductList", HttpServletResponse.SC_OK, true, products);
-            ResponseUtil.sendSuccessResponse(resp, response.getStatus(), response.getMessage());
+            return ApiResponseGenerator.success(products, HttpServletResponse.SC_OK, "Get All ProductList", "PRODUCTS_FETCHED");
         } catch (Exception e) {
-            ResponseUtil.sendErrorResponse(resp, HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Failed to fetch products");
+            return ApiResponseGenerator.fail("Failed to fetch products", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }
