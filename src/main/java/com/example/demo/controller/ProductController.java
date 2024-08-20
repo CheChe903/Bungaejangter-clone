@@ -57,11 +57,22 @@ public class ProductController extends HttpServlet {
 
         if ("/".equals(path)) {
             apiResponse = getAllProducts();
-        } else {
+        }
+        else if(path.matches("/\\d+")){
+            Long productId = extractProductIdFromPath(path);
+            apiResponse = getProductById(productId);
+        }
+        else {
             apiResponse = ApiResponseGenerator.fail("Invalid path", HttpServletResponse.SC_BAD_REQUEST);
         }
 
         ResponseUtil.sendResponse(resp, apiResponse);
+    }
+
+    private Long extractProductIdFromPath(String path) {
+        // Remove leading slash and parse the ID
+        String idStr = path.substring(1);
+        return Long.parseLong(idStr);
     }
 
     private ApiResponse<?> addProduct(HttpServletRequest req) throws IOException {
@@ -88,4 +99,15 @@ public class ProductController extends HttpServlet {
             return ApiResponseGenerator.fail("Failed to fetch products", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
+
+    private ApiResponse<?> getProductById(Long productId) {
+        try {
+            ProductDTO product = productService.getProductById(productId);
+            return ApiResponseGenerator.success(product, HttpServletResponse.SC_OK, "Get Product by Id", "PRODUCT_FETCHED");
+        } catch (Exception e) {
+            return ApiResponseGenerator.fail("Failed to fetch product", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }
