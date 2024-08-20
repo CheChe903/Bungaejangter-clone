@@ -38,4 +38,10 @@ public class ProductRepository {
         }
         return products;
     }
+
+    public Product getProductById(Long productId) {
+        Product product = productMap.get(productId);
+
+        return product;
+    }
 }
