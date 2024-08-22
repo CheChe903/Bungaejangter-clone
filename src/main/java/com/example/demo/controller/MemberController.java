@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
+import com.example.demo.domain.Member;
 import com.example.demo.domain.dto.request.Member.MemberLoginRequest;
 import com.example.demo.domain.dto.request.Member.MemberRegisterRequest;
+import com.example.demo.domain.dto.response.Member.MemberDTO;
 import com.example.demo.support.ApiResponse;
 import com.example.demo.support.ApiResponseGenerator;
 import com.example.demo.domain.dto.response.Member.LoginResponse;
@@ -31,7 +33,7 @@ public class MemberController extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            this.memberService = new MemberService(new MemberRepository(), new PasswordUtil(), new JwtUtil());
+            this.memberService = new MemberService(MemberRepository.getInstance(), new PasswordUtil(), new JwtUtil());
         } catch (IOException e) {
             throw new ServletException("JwtUtil 생성 실패", e);
         }
@@ -61,6 +63,30 @@ public class MemberController extends HttpServlet {
         ResponseUtil.sendResponse(resp, apiResponse);
     }
 
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String path = req.getPathInfo();
+        ApiResponse<?> apiResponse;
+
+        try {
+            if (path.matches("/\\d+")) {
+                Long memberId = extractMemberIdFromPath(path);
+                apiResponse = getMemberInfoById(memberId);
+            } else {
+                apiResponse = ApiResponseGenerator.fail("Invalid path", HttpServletResponse.SC_BAD_REQUEST);
+            }
+        } catch (Exception e) {
+            apiResponse = ApiResponseGenerator.fail("Internal server error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+
+        ResponseUtil.sendResponse(resp, apiResponse);
+    }
+
+    private Long extractMemberIdFromPath(String path) {
+        String idStr = path.substring(1);
+        return Long.parseLong(idStr);
+    }
+
     private ApiResponse<?> registerMember(HttpServletRequest req) throws IOException {
         MemberRegisterRequest memberRequest = objectMapper.readValue(req.getInputStream(), MemberRegisterRequest.class);
         boolean success = memberService.registerMember(memberRequest);
@@ -79,6 +105,15 @@ public class MemberController extends HttpServlet {
             return ApiResponseGenerator.success(loginResponse, HttpServletResponse.SC_OK, "Login successful", "LOGIN_SUCCESS");
         } else {
             return ApiResponseGenerator.fail("AUTH001", "Invalid email or password", HttpServletResponse.SC_UNAUTHORIZED);
+        }
+    }
+
+    private ApiResponse<?> getMemberInfoById(Long memberId) throws IOException {
+        try {
+            MemberDTO memberDTO = memberService.getMemberById(memberId);
+            return ApiResponseGenerator.success(memberDTO, HttpServletResponse.SC_OK, "Get Member successful", "MEMBER_GET");
+        } catch (Exception e) {
+            return ApiResponseGenerator.fail("Internal server error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
 }

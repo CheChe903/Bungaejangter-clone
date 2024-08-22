@@ -6,22 +6,35 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MemberRepository {
-    private final Map<Long, Member> memberMap = new HashMap<>();
-    private final Map<String, Long> emailToIdMap = new HashMap<>();
+    private static MemberRepository instance;
+    private final Map<Long, Member> memberMap;
+    private final Map<String, Long> emailToIdMap;
+    private long nextId;
 
-    private long nextId = 1;
+    private MemberRepository() {
+        memberMap = new HashMap<>();
+        emailToIdMap = new HashMap<>();
+        nextId = 1;
+    }
 
-    public void addMember(Member member) {
+    public static synchronized MemberRepository getInstance() {
+        if (instance == null) {
+            instance = new MemberRepository();
+        }
+        return instance;
+    }
+
+    public synchronized void addMember(Member member) {
         member.setMemberId(nextId++);
         memberMap.put(member.getMemberId(), member);
         emailToIdMap.put(member.getEmail(), member.getMemberId());
-
     }
-    public Member getMemberById(Long memberId) {
+
+    public synchronized Member getMemberById(Long memberId) {
         return memberMap.get(memberId);
     }
 
-    public Member getMemberByEmail(String email) {
+    public synchronized Member getMemberByEmail(String email) {
         Long memberId = emailToIdMap.get(email);
         return memberId != null ? memberMap.get(memberId) : null;
     }

@@ -29,7 +29,7 @@ public class ProductController extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            this.productService = new ProductService(new ProductRepository(), new MemberRepository(), new JwtUtil());
+            this.productService = new ProductService(ProductRepository.getInstance(), MemberRepository.getInstance(), new JwtUtil());
         } catch (IOException e) {
             throw new ServletException("JwtUtil 생성 실패", e);
         }
@@ -70,7 +70,6 @@ public class ProductController extends HttpServlet {
     }
 
     private Long extractProductIdFromPath(String path) {
-        // Remove leading slash and parse the ID
         String idStr = path.substring(1);
         return Long.parseLong(idStr);
     }
@@ -85,6 +84,7 @@ public class ProductController extends HttpServlet {
             String token = authHeader.substring(7);
             AddProductRequest addProductRequest = objectMapper.readValue(req.getInputStream(), AddProductRequest.class);
             ProductDTO productDTO = productService.addProduct(addProductRequest, token);
+            System.out.println(addProductRequest.getDescription());
             return ApiResponseGenerator.success(productDTO, HttpServletResponse.SC_CREATED, "Add Product successful", "PRODUCT_ADDED");
         } catch (Exception e) {
             return ApiResponseGenerator.fail("Internal server error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
