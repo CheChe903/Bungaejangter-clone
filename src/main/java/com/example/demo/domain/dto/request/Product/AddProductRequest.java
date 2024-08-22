@@ -6,16 +6,14 @@ public class AddProductRequest {
     private String productName;
     private String description;
     private BigDecimal price;
-    private String status;
     private String imageUrl;
 
     public AddProductRequest() {
     }
-    public AddProductRequest(String productName, String description, BigDecimal price, String status, String imageUrl) {
+    public AddProductRequest(String productName, String description, BigDecimal price, String imageUrl) {
         this.productName = productName;
         this.description = description;
         this.price = price;
-        this.status = status;
         this.imageUrl = imageUrl;
     }
 
@@ -41,14 +39,6 @@ public class AddProductRequest {
 
     public void setPrice(BigDecimal price) {
         this.price = price;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
     }
 
     public String getImageUrl() {

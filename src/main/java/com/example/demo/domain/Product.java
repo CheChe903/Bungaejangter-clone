@@ -8,12 +8,12 @@ public class Product {
     private String productName;
     private String description;
     private BigDecimal price;
-    private String status;
+    private ProductStatus status;
     private String imageUrl;
 
     private Member member;
 
-    public Product(String productName, String description, BigDecimal price, String status, String imageUrl) {
+    public Product(String productName, String description, BigDecimal price, ProductStatus status, String imageUrl) {
         this.productName = productName;
         this.description = description;
         this.price = price;
@@ -56,11 +56,11 @@ public class Product {
         this.price = price;
     }
 
-    public String getStatus() {
+    public ProductStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ProductStatus status) {
         this.status = status;
     }
 

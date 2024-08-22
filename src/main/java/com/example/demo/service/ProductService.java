@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.domain.Member;
 import com.example.demo.domain.Product;
+import com.example.demo.domain.ProductStatus;
 import com.example.demo.domain.dto.response.Product.ProductDTO;
 import com.example.demo.domain.dto.request.Product.AddProductRequest;
 import com.example.demo.repository.MemberRepository;
@@ -27,7 +28,7 @@ public class ProductService {
         if(member == null) {
             throw new IllegalArgumentException("Invalid token");
         }
-        Product product = new Product(req.getProductName(), req.getDescription(), req.getPrice(), req.getStatus(), req.getImageUrl());
+        Product product = new Product(req.getProductName(), req.getDescription(), req.getPrice(), ProductStatus.AVAILABLE, req.getImageUrl());
         product.setMember(member);
         List<Product> products = member.getProducts();
         products.add(product);

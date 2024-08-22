@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Product;
+import com.example.demo.domain.ProductStatus;
 import com.example.demo.domain.dto.response.Product.ProductDTO;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.util.JwtUtil;
@@ -31,8 +32,8 @@ class ProductServiceTest {
     @Test
     void testGetAllProductList() {
         // Arrange
-        ProductDTO product1 = new ProductDTO(1L,"Product1", "Description1", new BigDecimal(50.0), "Available", "imageUrl1");
-        ProductDTO product2 = new ProductDTO(2L,"Product2", "Description2", new BigDecimal(50.0), "Available", "imageUrl2");
+        ProductDTO product1 = new ProductDTO(1L,"Product1", "Description1", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl1");
+        ProductDTO product2 = new ProductDTO(2L,"Product2", "Description2", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl2");
         List<ProductDTO> productList = Arrays.asList(product1, product2);
 
         when(productRepository.getAllProductList()).thenReturn(productList);
@@ -50,7 +51,7 @@ class ProductServiceTest {
     @Test
     void testGetProductById() {
         // Arrange
-        Product product = new Product("Product1", "Description1", new BigDecimal(50.0), "Available", "imageUrl1");
+        Product product = new Product("Product1", "Description1", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl1");
 
         when(productRepository.getProductById(1L)).thenReturn(product);
 

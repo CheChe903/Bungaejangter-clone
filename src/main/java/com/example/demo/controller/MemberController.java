@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.domain.Member;
+import com.example.demo.domain.ProductStatus;
 import com.example.demo.domain.dto.request.Member.MemberLoginRequest;
 import com.example.demo.domain.dto.request.Member.MemberRegisterRequest;
 import com.example.demo.domain.dto.response.Member.MemberDTO;
+import com.example.demo.domain.dto.response.Product.ProductDTO;
 import com.example.demo.support.ApiResponse;
 import com.example.demo.support.ApiResponseGenerator;
 import com.example.demo.domain.dto.response.Member.LoginResponse;
@@ -20,6 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 @WebServlet(urlPatterns = "/member/*")
 public class MemberController extends HttpServlet {
@@ -72,7 +75,22 @@ public class MemberController extends HttpServlet {
             if (path.matches("/\\d+")) {
                 Long memberId = extractMemberIdFromPath(path);
                 apiResponse = getMemberInfoById(memberId);
-            } else {
+            }
+            else if(path.matches("/\\d+/products")){
+                String statusParam = req.getParameter("status");
+
+                if(statusParam != null && !statusParam.isEmpty()) {
+                    try {
+                        ProductStatus status = ProductStatus.valueOf(statusParam.toUpperCase());
+                        apiResponse =getProductsListSortedStatus(status);
+                    } catch (IllegalStateException e) {
+                        apiResponse = ApiResponseGenerator.fail("Invalid status value", HttpServletResponse.SC_BAD_REQUEST);
+                    }
+                } else {
+                    apiResponse = ApiResponseGenerator.fail("Missing status parameter", HttpServletResponse.SC_BAD_REQUEST);
+                }
+            }
+            else {
                 apiResponse = ApiResponseGenerator.fail("Invalid path", HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch (Exception e) {
@@ -112,6 +130,16 @@ public class MemberController extends HttpServlet {
         try {
             MemberDTO memberDTO = memberService.getMemberById(memberId);
             return ApiResponseGenerator.success(memberDTO, HttpServletResponse.SC_OK, "Get Member successful", "MEMBER_GET");
+        } catch (Exception e) {
+            return ApiResponseGenerator.fail("Internal server error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    private ApiResponse<?> getProductsListSortedStatus(ProductStatus status) {
+        try {
+            List<ProductDTO> productDTOList = memberService.getProductsListSortedStatus(status);
+
+            return ApiResponseGenerator.success(productDTOList, HttpServletResponse.SC_OK, "Get Products successful", "PRODUCTS_GET");
         } catch (Exception e) {
             return ApiResponseGenerator.fail("Internal server error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
