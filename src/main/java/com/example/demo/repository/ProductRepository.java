@@ -11,16 +11,29 @@ import java.util.Map;
 
 public class ProductRepository {
 
-    private final Map<Long, Product> productMap = new HashMap<>();
+    private static ProductRepository instance;
 
-    private long nextId = 1;
+    private final Map<Long, Product> productMap;
 
-    public void addProduct(Product product) {
+    private long nextId;
+
+    public ProductRepository() {
+        productMap = new HashMap<>();
+        nextId=1L;
+    }
+
+    public static synchronized ProductRepository getInstance() {
+        if (instance == null) {
+            instance = new ProductRepository();
+        }
+        return instance;
+    }
+    public synchronized void addProduct(Product product) {
         product.setProductId(nextId++);
         productMap.put(product.getProductId(), product);
     }
 
-    public List<ProductDTO> getAllProductList() {
+    public synchronized List<ProductDTO> getAllProductList() {
         List<ProductDTO> products = new ArrayList<>();
         for(Map.Entry<Long, Product> entry :productMap.entrySet()) {
             Product product = entry.getValue();
@@ -35,6 +48,19 @@ public class ProductRepository {
             );
 
             products.add(productDTO);
+        }
+        return products;
+    }
+
+    public synchronized Product getProductById(Long productId) {
+        return productMap.get(productId);
+    }
+    public  synchronized List<Product> getProductListById(Long memberId) {
+        List<Product> products = new ArrayList<>();
+        for (Product product : productMap.values()) {
+            if (product.getMember() != null && product.getMember().getMemberId().equals(memberId)) {
+                products.add(product);
+            }
         }
         return products;
     }

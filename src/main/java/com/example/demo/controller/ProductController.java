@@ -29,7 +29,7 @@ public class ProductController extends HttpServlet {
     public void init() throws ServletException {
         super.init();
         try {
-            this.productService = new ProductService(new ProductRepository(), new MemberRepository(), new JwtUtil());
+            this.productService = new ProductService(ProductRepository.getInstance(), MemberRepository.getInstance(), new JwtUtil());
         } catch (IOException e) {
             throw new ServletException("JwtUtil 생성 실패", e);
         }
@@ -57,11 +57,21 @@ public class ProductController extends HttpServlet {
 
         if ("/".equals(path)) {
             apiResponse = getAllProducts();
-        } else {
+        }
+        else if(path.matches("/\\d+")){
+            Long productId = extractProductIdFromPath(path);
+            apiResponse = getProductById(productId);
+        }
+        else {
             apiResponse = ApiResponseGenerator.fail("Invalid path", HttpServletResponse.SC_BAD_REQUEST);
         }
 
         ResponseUtil.sendResponse(resp, apiResponse);
+    }
+
+    private Long extractProductIdFromPath(String path) {
+        String idStr = path.substring(1);
+        return Long.parseLong(idStr);
     }
 
     private ApiResponse<?> addProduct(HttpServletRequest req) throws IOException {
@@ -74,6 +84,7 @@ public class ProductController extends HttpServlet {
             String token = authHeader.substring(7);
             AddProductRequest addProductRequest = objectMapper.readValue(req.getInputStream(), AddProductRequest.class);
             ProductDTO productDTO = productService.addProduct(addProductRequest, token);
+            System.out.println(addProductRequest.getDescription());
             return ApiResponseGenerator.success(productDTO, HttpServletResponse.SC_CREATED, "Add Product successful", "PRODUCT_ADDED");
         } catch (Exception e) {
             return ApiResponseGenerator.fail("Internal server error", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -88,4 +99,15 @@ public class ProductController extends HttpServlet {
             return ApiResponseGenerator.fail("Failed to fetch products", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
     }
+
+    private ApiResponse<?> getProductById(Long productId) {
+        try {
+            ProductDTO product = productService.getProductById(productId);
+            return ApiResponseGenerator.success(product, HttpServletResponse.SC_OK, "Get Product by Id", "PRODUCT_FETCHED");
+        } catch (Exception e) {
+            return ApiResponseGenerator.fail("Failed to fetch product", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
 }

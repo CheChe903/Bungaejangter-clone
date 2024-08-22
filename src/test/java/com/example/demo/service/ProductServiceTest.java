@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.domain.Product;
 import com.example.demo.domain.dto.response.Product.ProductDTO;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.util.JwtUtil;
@@ -44,5 +45,20 @@ class ProductServiceTest {
         assertEquals(2, productDTOList.size());
         assertEquals("Product1", productDTOList.get(0).getProductName());
         assertEquals("Product2", productDTOList.get(1).getProductName());
+    }
+
+    @Test
+    void testGetProductById() {
+        // Arrange
+        Product product = new Product("Product1", "Description1", new BigDecimal(50.0), "Available", "imageUrl1");
+
+        when(productRepository.getProductById(1L)).thenReturn(product);
+
+        // Act
+        ProductDTO productDTO = productService.getProductById(1L);
+
+        // Assert
+        assertNotNull(productDTO);
+        assertEquals("Product1", productDTO.getProductName());
     }
 }

@@ -24,13 +24,24 @@ public class ProductService {
 
     public ProductDTO addProduct(AddProductRequest req, String token) {
         Member member = memberRepository.getMemberById(jwtUtil.parseToken(token));
+        if(member == null) {
+            throw new IllegalArgumentException("Invalid token");
+        }
         Product product = new Product(req.getProductName(), req.getDescription(), req.getPrice(), req.getStatus(), req.getImageUrl());
         product.setMember(member);
+        List<Product> products = member.getProducts();
+        products.add(product);
+        member.setProducts(products);
         productRepository.addProduct(product);
         return new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl());
     }
 
     public List<ProductDTO> getAllProductList() {
         return productRepository.getAllProductList();
+    }
+
+    public ProductDTO getProductById(Long productId) {
+        Product product = productRepository.getProductById(productId);
+        return new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl());
     }
 }
