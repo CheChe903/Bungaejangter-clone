@@ -1,14 +1,19 @@
 package com.example.demo.service;
 
 import com.example.demo.domain.Member;
+import com.example.demo.domain.Product;
 import com.example.demo.domain.dto.request.Member.MemberLoginRequest;
 import com.example.demo.domain.dto.request.Member.MemberRegisterRequest;
+import com.example.demo.domain.dto.response.Member.MemberDTO;
+import com.example.demo.domain.dto.response.Product.ProductDTO;
 import com.example.demo.repository.MemberRepository;
 import com.example.demo.util.JwtUtil;
 import com.example.demo.util.PasswordUtil;
 import jakarta.servlet.http.HttpServletResponse;
 
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class MemberService {
     private final MemberRepository memberRepository;
@@ -47,5 +52,14 @@ public class MemberService {
         } else {
             return null;
         }
+    }
+
+    public MemberDTO getMemberById(Long memberId) {
+        Member member = memberRepository.getMemberById(memberId);
+        List<Product> products = member.getProducts();
+        List<ProductDTO> productDTOs = products.stream()
+                .map(product -> new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl()))
+                .collect(Collectors.toList());
+        return new MemberDTO(member.getMemberId(), member.getUsername(), member.getEmail(), productDTOs);
     }
 }
