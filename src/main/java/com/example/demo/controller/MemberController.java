@@ -83,7 +83,7 @@ public class MemberController extends HttpServlet {
                     try {
                         ProductStatus status = ProductStatus.valueOf(statusParam.toUpperCase());
                         apiResponse =getProductsListSortedStatus(status);
-                    } catch (IllegalStateException e) {
+                    } catch (IllegalArgumentException e) {
                         apiResponse = ApiResponseGenerator.fail("Invalid status value", HttpServletResponse.SC_BAD_REQUEST);
                     }
                 } else {
