@@ -105,6 +105,34 @@ class MemberServiceTest {
         assertEquals("imageUrl2", productDTO2.getImageUrl());
     }
 
+
+    @Test
+    void testGetProductsListSortedStatus() {
+        // Arrange
+        Product product1 = new Product("Product1", "Description1", new BigDecimal("100.0"), ProductStatus.SOLD_OUT, "imageUrl1");
+        Product product2 = new Product("Product2", "Description2", new BigDecimal("200.0"), ProductStatus.AVAILABLE, "imageUrl2");
+        Product product3 = new Product("Product3", "Description3", new BigDecimal("300.0"), ProductStatus.AVAILABLE, "imageUrl3");
+        product1.setProductId(1L);
+        product2.setProductId(2L);
+        product3.setProductId(3L);
+
+        List<Product> sortedProducts = Arrays.asList(product2, product3, product1);
+
+        when(memberRepository.getProductsListSortedStatus(ProductStatus.AVAILABLE)).thenReturn(sortedProducts);
+
+        // Act
+        List<ProductDTO> productDTOs = memberService.getProductsListSortedStatus(ProductStatus.AVAILABLE);
+
+        // Assert
+        assertNotNull(productDTOs);
+        assertEquals(3, productDTOs.size());
+
+        assertEquals(2L, productDTOs.get(0).getProductId());  // Product2 with AVAILABLE
+        assertEquals(3L, productDTOs.get(1).getProductId());  // Product3 with AVAILABLE
+        assertEquals(1L, productDTOs.get(2).getProductId());  // Product1 with SOLD_OUT
+    }
+
+
     private static Member getMember(Long memberId) {
         Member member = new Member("username", "email@example.com", "hashedPassword");
         member.setMemberId(memberId);
