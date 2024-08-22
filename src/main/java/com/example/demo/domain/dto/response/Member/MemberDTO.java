@@ -52,4 +52,8 @@ public class MemberDTO {
     public void setProductDTOList(List<ProductDTO> productDTOList) {
         this.productDTOList = productDTOList;
     }
+
+    public List<ProductDTO> getProducts() {
+        return  productDTOList;
+    }
 }
