@@ -1,10 +1,13 @@
 package com.example.demo.repository;
 
 import com.example.demo.domain.Member;
+import com.example.demo.domain.Product;
+import com.example.demo.domain.ProductStatus;
 
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-
 public class MemberRepository {
     private static MemberRepository instance;
     private final Map<Long, Member> memberMap;
@@ -38,4 +41,16 @@ public class MemberRepository {
         Long memberId = emailToIdMap.get(email);
         return memberId != null ? memberMap.get(memberId) : null;
     }
+
+    public synchronized List<Product> getProductsListSortedStatus(ProductStatus status) {
+        Comparator<Product> statusComparator = Comparator.comparing(
+                (Product product) -> product.getStatus() == status ? 0 : 1
+        ).thenComparing(Product::getStatus);
+
+        return memberMap.values().stream()
+                .flatMap(member -> member.getProducts().stream())
+                .sorted(statusComparator)
+                .toList();
+    }
+
 }
