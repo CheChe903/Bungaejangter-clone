@@ -1,5 +1,7 @@
 package com.example.demo.domain;
 
+import com.example.demo.domain.dto.response.Product.ProductDTO;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +27,7 @@ public class Member {
     }
 
     public void setProducts(List<Product> products) {
-        this.products = products;
+        this.products= products;
     }
 
     public Long getMemberId() {
@@ -59,4 +61,5 @@ public class Member {
     public void setPassword(String hashedPassword) {
         this.hashedPassword = hashedPassword;
     }
+
 }
