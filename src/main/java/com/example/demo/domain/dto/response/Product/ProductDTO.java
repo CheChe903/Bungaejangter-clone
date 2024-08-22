@@ -1,5 +1,7 @@
 package com.example.demo.domain.dto.response.Product;
 
+import com.example.demo.domain.ProductStatus;
+
 import java.math.BigDecimal;
 
 public class ProductDTO {
@@ -7,7 +9,7 @@ public class ProductDTO {
     private Long productId;
     private String productName;
     private BigDecimal price;
-    private String status;
+    private ProductStatus status;
 
     private String description;
     private String imageUrl;
@@ -16,7 +18,7 @@ public class ProductDTO {
 
     }
 
-    public ProductDTO(Long productId, String productName, String description, BigDecimal price, String status, String imageUrl) {
+    public ProductDTO(Long productId, String productName, String description, BigDecimal price, ProductStatus status, String imageUrl) {
         this.productId = productId;
         this.productName = productName;
         this.price = price;
@@ -56,11 +58,11 @@ public class ProductDTO {
         this.price = price;
     }
 
-    public String getStatus() {
+    public ProductStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(ProductStatus status) {
         this.status = status;
     }
 
