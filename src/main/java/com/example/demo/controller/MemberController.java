@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.JacksonConfig;
 import com.example.demo.domain.Member;
 import com.example.demo.domain.ProductStatus;
 import com.example.demo.domain.dto.request.Member.MemberLoginRequest;
@@ -40,7 +41,7 @@ public class MemberController extends HttpServlet {
         } catch (IOException e) {
             throw new ServletException("JwtUtil 생성 실패", e);
         }
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JacksonConfig.createObjectMapper();
     }
 
     @Override
