@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,8 +33,8 @@ class ProductServiceTest {
     @Test
     void testGetAllProductList() {
         // Arrange
-        ProductDTO product1 = new ProductDTO(1L,"Product1", "Description1", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl1");
-        ProductDTO product2 = new ProductDTO(2L,"Product2", "Description2", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl2");
+        ProductDTO product1 = new ProductDTO(1L,"Product1", "Description1", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl1", "title1", LocalDateTime.now(), LocalDateTime.now());
+        ProductDTO product2 = new ProductDTO(2L,"Product2", "Description2", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl2", "title2", LocalDateTime.now(), LocalDateTime.now());
         List<ProductDTO> productList = Arrays.asList(product1, product2);
 
         when(productRepository.getAllProductList()).thenReturn(productList);
@@ -51,7 +52,7 @@ class ProductServiceTest {
     @Test
     void testGetProductById() {
         // Arrange
-        Product product = new Product("Product1", "Description1", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl1");
+        Product product = new Product("Product1", "Description1", new BigDecimal("50.0"), ProductStatus.AVAILABLE, "imageUrl1", "title1", LocalDateTime.now(), LocalDateTime.now());
 
         when(productRepository.getProductById(1L)).thenReturn(product);
 

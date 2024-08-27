@@ -3,6 +3,7 @@ package com.example.demo.domain.dto.response.Product;
 import com.example.demo.domain.ProductStatus;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class ProductDTO {
 
@@ -14,17 +15,26 @@ public class ProductDTO {
     private String description;
     private String imageUrl;
 
-    public ProductDTO() {
+    private String title;
 
-    }
+    private LocalDateTime createdAt;
 
-    public ProductDTO(Long productId, String productName, String description, BigDecimal price, ProductStatus status, String imageUrl) {
+    private LocalDateTime updateAt;
+
+    public ProductDTO(Long productId, String productName, String description, BigDecimal price, ProductStatus status, String imageUrl, String title, LocalDateTime createdAt, LocalDateTime updateAt) {
         this.productId = productId;
         this.productName = productName;
+        this.description = description;
         this.price = price;
-        this.description =description;
         this.status = status;
         this.imageUrl = imageUrl;
+        this.title = title;
+        this.createdAt = createdAt;
+        this.updateAt = updateAt;
+    }
+
+    public ProductDTO() {
+
     }
 
     public Long getProductId() {
@@ -72,6 +82,30 @@ public class ProductDTO {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 }
 

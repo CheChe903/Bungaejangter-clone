@@ -59,7 +59,7 @@ public class MemberService {
         Member member = memberRepository.getMemberById(memberId);
         List<Product> products = member.getProducts();
         List<ProductDTO> productDTOs = products.stream()
-                .map(product -> new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl()))
+                .map(product -> new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl(), product.getTitle(), product.getCreatedAt(), product.getUpdateAt()))
                 .collect(Collectors.toList());
         return new MemberDTO(member.getMemberId(), member.getUsername(), member.getEmail(), productDTOs);
     }
@@ -67,7 +67,25 @@ public class MemberService {
     public List<ProductDTO> getProductsListSortedStatus(ProductStatus status) {
         List<Product> products = memberRepository.getProductsListSortedStatus(status);
         return products.stream()
-                .map(product -> new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl()))
+                .sorted((p1, p2) -> {
+                    if (p1.getStatus() == p2.getStatus()) {
+                        return p1.getProductId().compareTo(p2.getProductId());
+                    } else if (p1.getStatus() == ProductStatus.AVAILABLE) {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
+                })
+                .map(product -> new ProductDTO(
+                        product.getProductId(),
+                        product.getProductName(),
+                        product.getDescription(),
+                        product.getPrice(),
+                        product.getStatus(),
+                        product.getImageUrl(),
+                        product.getTitle(),
+                        product.getCreatedAt(),
+                        product.getUpdateAt()))
                 .collect(Collectors.toList());
     }
 }

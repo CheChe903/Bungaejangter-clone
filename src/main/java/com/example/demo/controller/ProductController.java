@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.config.JacksonConfig;
 import com.example.demo.domain.dto.response.Product.ProductDTO;
 import com.example.demo.domain.dto.request.Product.AddProductRequest;
 import com.example.demo.repository.MemberRepository;
@@ -33,7 +34,7 @@ public class ProductController extends HttpServlet {
         } catch (IOException e) {
             throw new ServletException("JwtUtil 생성 실패", e);
         }
-        this.objectMapper = new ObjectMapper();
+        this.objectMapper = JacksonConfig.createObjectMapper();
     }
 
     @Override

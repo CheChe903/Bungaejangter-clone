@@ -3,7 +3,6 @@ package com.example.demo.repository;
 
 import com.example.demo.domain.Product;
 import com.example.demo.domain.dto.response.Product.ProductDTO;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,9 +43,11 @@ public class ProductRepository {
                     product.getDescription(),
                     product.getPrice(),
                     product.getStatus(),
-                    product.getImageUrl()
+                    product.getImageUrl(),
+                    product.getTitle(),
+                    product.getCreatedAt(),
+                    product.getUpdateAt()
             );
-
             products.add(productDTO);
         }
         return products;
