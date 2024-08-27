@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 
@@ -109,11 +110,11 @@ class MemberServiceTest {
     @Test
     void testGetProductsListSortedStatus() {
         // Arrange
-        Product product1 = new Product("Product1", "Description1", new BigDecimal("100.0"), ProductStatus.SOLD_OUT, "imageUrl1");
-        Product product2 = new Product("Product2", "Description2", new BigDecimal("200.0"), ProductStatus.AVAILABLE, "imageUrl2");
+        Product product1 = new Product("Product1", "Description1", new BigDecimal("100.0"), ProductStatus.SOLD_OUT, "imageUrl1", "title1", LocalDateTime.now(), LocalDateTime.now());
+        Product product2 = new Product("Product2", "Description2", new BigDecimal("200.0"), ProductStatus.AVAILABLE, "imageUrl2","title2", LocalDateTime.now(), LocalDateTime.now());
 
-        Product product3 = new Product("Product3", "Description3", new BigDecimal("300.0"), ProductStatus.AVAILABLE, "imageUrl3");
-        Product product4 = new Product("Product4", "Description4", new BigDecimal("400.0"), ProductStatus.SOLD_OUT, "imageUrl4");
+        Product product3 = new Product("Product3", "Description3", new BigDecimal("300.0"), ProductStatus.AVAILABLE, "imageUrl3", "title3", LocalDateTime.now(), LocalDateTime.now());
+        Product product4 = new Product("Product4", "Description4", new BigDecimal("400.0"), ProductStatus.SOLD_OUT, "imageUrl4",  "title4", LocalDateTime.now(), LocalDateTime.now());
         product1.setProductId(1L);
         product2.setProductId(2L);
         product3.setProductId(3L);
@@ -142,9 +143,9 @@ class MemberServiceTest {
         Member member = new Member("username", "email@example.com", "hashedPassword");
         member.setMemberId(memberId);
 
-        Product product1 = new Product("Product1", "Description1", new BigDecimal("100.0"), ProductStatus.AVAILABLE, "imageUrl1");
+        Product product1 = new Product("Product1", "Description1", new BigDecimal("100.0"), ProductStatus.AVAILABLE, "imageUrl1","title1", LocalDateTime.now(), LocalDateTime.now());
         product1.setProductId(1L);
-        Product product2 = new Product("Product2", "Description2", new BigDecimal("200.0"), ProductStatus.AVAILABLE, "imageUrl2");
+        Product product2 = new Product("Product2", "Description2", new BigDecimal("200.0"), ProductStatus.AVAILABLE, "imageUrl2","title2", LocalDateTime.now(), LocalDateTime.now());
         product2.setProductId(2L);
 
         List<Product> products = Arrays.asList(product1, product2);
