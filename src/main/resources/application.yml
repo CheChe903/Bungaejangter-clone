@@ -17,6 +17,9 @@ spring:
   mvc:
     servlet:
       load-on-startup: -1
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
 
 jwt:
   secret: "e1a3397e6e62cd5e461defec61820c385bdb98a563dbb941bdd6b75e93414bd701df221ef11295546b3cd39370b932761608f41cef9168743dec68f8fb302fc0"
@@ -24,3 +27,4 @@ jwt:
     expiredMs: 3600000
   refresh:
     expiredMs: 21600000
+
