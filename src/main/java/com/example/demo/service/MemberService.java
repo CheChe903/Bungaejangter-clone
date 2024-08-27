@@ -59,7 +59,7 @@ public class MemberService {
         Member member = memberRepository.getMemberById(memberId);
         List<Product> products = member.getProducts();
         List<ProductDTO> productDTOs = products.stream()
-                .map(product -> new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl()))
+                .map(product -> new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl(), product.getTitle(), product.getCreatedAt(), product.getUpdateAt()))
                 .collect(Collectors.toList());
         return new MemberDTO(member.getMemberId(), member.getUsername(), member.getEmail(), productDTOs);
     }
@@ -82,7 +82,10 @@ public class MemberService {
                         product.getDescription(),
                         product.getPrice(),
                         product.getStatus(),
-                        product.getImageUrl()))
+                        product.getImageUrl(),
+                        product.getTitle(),
+                        product.getCreatedAt(),
+                        product.getUpdateAt()))
                 .collect(Collectors.toList());
     }
 }

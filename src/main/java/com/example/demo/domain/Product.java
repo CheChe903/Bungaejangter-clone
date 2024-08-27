@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class Product {
 
@@ -11,14 +12,22 @@ public class Product {
     private ProductStatus status;
     private String imageUrl;
 
+    private String title;
     private Member member;
 
-    public Product(String productName, String description, BigDecimal price, ProductStatus status, String imageUrl) {
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updateAt;
+
+    public Product(String productName, String description, BigDecimal price, ProductStatus status, String imageUrl, String title, LocalDateTime createdAt, LocalDateTime updateAt) {
         this.productName = productName;
         this.description = description;
         this.price = price;
         this.status = status;
         this.imageUrl = imageUrl;
+        this.title = title;
+        this.createdAt =createdAt;
+        this.updateAt = updateAt;
     }
 
     public Product() {
@@ -78,5 +87,29 @@ public class Product {
 
     public void setMember(Member member) {
         this.member = member;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdateAt() {
+        return updateAt;
+    }
+
+    public void setUpdateAt(LocalDateTime updateAt) {
+        this.updateAt = updateAt;
     }
 }

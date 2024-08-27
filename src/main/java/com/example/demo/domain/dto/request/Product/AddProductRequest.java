@@ -7,14 +7,15 @@ public class AddProductRequest {
     private String description;
     private BigDecimal price;
     private String imageUrl;
-
+    private String title;
     public AddProductRequest() {
     }
-    public AddProductRequest(String productName, String description, BigDecimal price, String imageUrl) {
+    public AddProductRequest(String productName, String description, BigDecimal price, String imageUrl, String title) {
         this.productName = productName;
         this.description = description;
         this.price = price;
         this.imageUrl = imageUrl;
+        this.title= title;
     }
 
     public String getProductName() {
@@ -47,5 +48,13 @@ public class AddProductRequest {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

@@ -9,6 +9,7 @@ import com.example.demo.repository.MemberRepository;
 import com.example.demo.repository.ProductRepository;
 import com.example.demo.util.JwtUtil;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class ProductService {
@@ -28,13 +29,13 @@ public class ProductService {
         if(member == null) {
             throw new IllegalArgumentException("Invalid token");
         }
-        Product product = new Product(req.getProductName(), req.getDescription(), req.getPrice(), ProductStatus.AVAILABLE, req.getImageUrl());
+        Product product = new Product(req.getProductName(), req.getDescription(), req.getPrice(), ProductStatus.AVAILABLE, req.getImageUrl(), req.getTitle() , LocalDateTime.now(), LocalDateTime.now());
         product.setMember(member);
         List<Product> products = member.getProducts();
         products.add(product);
         member.setProducts(products);
         productRepository.addProduct(product);
-        return new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl());
+        return new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl(), product.getTitle(), product.getCreatedAt(), product.getUpdateAt());
     }
 
     public List<ProductDTO> getAllProductList() {
@@ -43,6 +44,6 @@ public class ProductService {
 
     public ProductDTO getProductById(Long productId) {
         Product product = productRepository.getProductById(productId);
-        return new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl());
+        return new ProductDTO(product.getProductId(), product.getProductName(), product.getDescription(), product.getPrice(), product.getStatus(), product.getImageUrl(), product.getTitle(), product.getCreatedAt(), product.getUpdateAt());
     }
 }
