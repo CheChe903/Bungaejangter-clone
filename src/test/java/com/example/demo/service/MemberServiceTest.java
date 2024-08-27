@@ -111,12 +111,15 @@ class MemberServiceTest {
         // Arrange
         Product product1 = new Product("Product1", "Description1", new BigDecimal("100.0"), ProductStatus.SOLD_OUT, "imageUrl1");
         Product product2 = new Product("Product2", "Description2", new BigDecimal("200.0"), ProductStatus.AVAILABLE, "imageUrl2");
+
         Product product3 = new Product("Product3", "Description3", new BigDecimal("300.0"), ProductStatus.AVAILABLE, "imageUrl3");
+        Product product4 = new Product("Product4", "Description4", new BigDecimal("400.0"), ProductStatus.SOLD_OUT, "imageUrl4");
         product1.setProductId(1L);
         product2.setProductId(2L);
         product3.setProductId(3L);
+        product4.setProductId(4L);
 
-        List<Product> sortedProducts = Arrays.asList(product2, product3, product1);
+        List<Product> sortedProducts = Arrays.asList(product1, product2, product3, product4);
 
         when(memberRepository.getProductsListSortedStatus(ProductStatus.AVAILABLE)).thenReturn(sortedProducts);
 
@@ -125,11 +128,13 @@ class MemberServiceTest {
 
         // Assert
         assertNotNull(productDTOs);
-        assertEquals(3, productDTOs.size());
+        assertEquals(4, productDTOs.size());
 
         assertEquals(2L, productDTOs.get(0).getProductId());  // Product2 with AVAILABLE
         assertEquals(3L, productDTOs.get(1).getProductId());  // Product3 with AVAILABLE
         assertEquals(1L, productDTOs.get(2).getProductId());  // Product1 with SOLD_OUT
+        assertEquals(4L, productDTOs.get(3).getProductId());  // Product4 with SOLD_OUT
+
     }
 
 
